@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Container, Grid, Paper, Typography, LinearProgress, Button } from '@mui/material';
+import { Container, Grid, Paper, Typography, LinearProgress, Button, TextField } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -43,6 +43,36 @@ function App() {
   const [spoons, setSpoons] = useState(10);
   const maxSpoons = 15;
 
+  const [command, setCommand] = useState('');
+
+  const handleCommandChange = (event) => {
+    setCommand(event.target.value);
+  };
+
+  const handleCommandSubmit = (event) => {
+    event.preventDefault();
+    processCommand(command);
+    setCommand('');
+  };
+
+  const processCommand = (cmd) => {
+    // Simple command processing logic
+    if (cmd.toLowerCase().startsWith('add task')) {
+      const newTask = {
+        title: cmd.slice(9).trim(),
+        status: 'Not Started',
+        energy: 'Medium',
+        time: '30 min'
+      };
+      setTasks([...tasks, newTask]);
+    } else if (cmd.toLowerCase() === 'list tasks') {
+      console.log(tasks);  // For now, just log to console
+    } else {
+      console.log('Command not recognized');
+    }
+    // In the future, this is where we'd integrate with an LLM for more complex processing
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -50,6 +80,23 @@ function App() {
         <Typography variant="h3" gutterBottom>
           AuDHD-Friendly Dashboard
         </Typography>
+        
+        {/* Natural Language Interface */}
+        <Paper elevation={3} sx={{ p: 2, mb: 4 }}>
+          <form onSubmit={handleCommandSubmit}>
+            <TextField
+              fullWidth
+              label="Enter a command"
+              variant="outlined"
+              value={command}
+              onChange={handleCommandChange}
+              sx={{ mb: 2 }}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Execute
+            </Button>
+          </form>
+        </Paper>
         
         <Paper elevation={3} sx={{ p: 2, mb: 4 }}>
           <Typography variant="h5" gutterBottom>
